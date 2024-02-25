@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - .github/workflows/vcs-scraper-ci.yaml
-      - components/resc-vcs-scraper/**
+      -  /**
       - '!**.md'
       - '!**.png'
       - '!**.gif'
@@ -14,7 +14,7 @@ on:
     branches: [ "main" ]
     paths:
       - .github/workflows/vcs-scraper-ci.yaml
-      - components/resc-vcs-scraper/**
+      - /**
       - '!**.md'
       - '!**.png'
       - '!**.gif'
@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
 
 env:
-  RESC_VCS_SCRAPER_DIR: components/resc-vcs-scraper
+  RESC_VCS_SCRAPER_DIR: /
   CONTAINER_REGISTRY: rescabnamro
   IMAGE_NAME: resc-vcs-scraper
 
@@ -48,22 +48,18 @@ jobs:
 
     - name: Install test dependencies
       run: |
-        cd ${{ env.RESC_VCS_SCRAPER_DIR }}
         pip install -r test-requirements.txt
 
     - name: Test with pytest
       run: |
-        cd ${{ env.RESC_VCS_SCRAPER_DIR }}
         tox -e pytest
 
     - name: Import sorting with isort
       run: |
-        cd ${{ env.RESC_VCS_SCRAPER_DIR }}
         tox -e sort
     
     - name: Lint with flake8
       run: |
-        cd ${{ env.RESC_VCS_SCRAPER_DIR }}
         tox -e lint
 
     # This step will only execute if PR is created internally.
@@ -71,7 +67,7 @@ jobs:
       if: ${{ (github.event.pull_request.head.repo.full_name == 'abnamro/repository-scanner') || (github.ref == 'refs/heads/main') }}
       uses: SonarSource/sonarcloud-github-action@master
       with:
-        projectBaseDir: ${{ env.RESC_VCS_SCRAPER_DIR }}
+        projectBaseDir: /
         args: >
           -Dsonar.organization=abnamro-resc
           -Dsonar.projectKey=abnamro-resc_resc-vcs-scraper
@@ -127,7 +123,6 @@ jobs:
 
       - name: Building python package
         run: |
-          cd ${{ env.RESC_VCS_SCRAPER_DIR }}
           python -m pip install --upgrade pip build
           python -m build
 
@@ -136,13 +131,12 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.__PYPI_TOKEN__ }}
-          packages_dir: ${{ env.RESC_VCS_SCRAPER_DIR }}/dist
+          packages_dir: ./dist
           skip_existing: true
 
       - id: getversion
         name: Get package version
         run: | 
-          cd ${{ env.RESC_VCS_SCRAPER_DIR }}
           scraper_version=$(python ./setup.py --version)
           echo "scraper_version=$scraper_version" >> $GITHUB_OUTPUT
 
@@ -158,12 +152,11 @@ jobs:
       - name: Docker Lint
         uses: hadolint/hadolint-action@v2.0.0
         with:
-          dockerfile: ${{ env.RESC_VCS_SCRAPER_DIR }}/Dockerfile
+          dockerfile: ./Dockerfile
           failure-threshold: error
 
       - name: Build an image from Dockerfile
         run: |
-          cd ${{ env.RESC_VCS_SCRAPER_DIR }}
           docker build -t ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{needs.python-build-and-publish.outputs.scraper_version}} .
 
       - name: Run Trivy vulnerability scanner
@@ -206,6 +199,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ${{ env.RESC_VCS_SCRAPER_DIR }}/
+          context: ./
           push: ${{ env.PUBLISH_IMAGE }}
           tags: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{needs.python-build-and-publish.outputs.scraper_version}}

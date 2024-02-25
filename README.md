@@ -1,163 +1,177 @@
-                  
-            ______                     _ _                     _____
-            | ___ \                   (_| |                   /  ___|
-            | |_/ /___ _ __   ___  ___ _| |_ ___  _ __ _   _  \ `--.  ___ __ _ _ __  _ __   ___ _ __
-            |    // _ | '_ \ / _ \/ __| | __/ _ \| '__| | | |  `--. \/ __/ _` | '_ \| '_ \ / _ | '__|
-            | |\ |  __| |_) | (_) \__ | | || (_) | |  | |_| | /\__/ | (_| (_| | | | | | | |  __| |
-            \_| \_\___| .__/ \___/|___|_|\__\___/|_|   \__, | \____/ \___\__,_|_| |_|_| |_|\___|_|
-                      | |                               __/ |
-                      |_|                              |___/
-
-<div align="center">
-    <h1>Repository Scanner</h1>
-</div>
-
-[![Maintainer][maintainer-shield]][maintainer-url]
-[![License][license-shield]][license-url]
-[![LaunchedDate][launched-shield]][launched-url]
-[![LastUpdated][updated-shield]][updated-url]
-[![Build][build-shield]][build-url]
-[![Version][version-shield]][version-url]
+# Repository Scanner Version Control System Scraper (RESC-VCS-SCRAPER)
 [![Python][python-shield]][python-url]
-[![TypeScript][typescript-shield]][typescript-url]
-[![Vue.js][vuejs-shield]][vuejs-url]
-[![Docker][docker-shield]][docker-url]
-[![Kubernetes][k8-shield]][k8-url]
-[![Helm][helm-shield]][helm-url]
-[![Downloads][downloads-shield]][downloads-url]
-[![DockerPulls][docker-pulls-shield]][docker-pulls-url]
-[![OpenSSFBestPractices][openssf-shield]][openssf-url]
-[![OpenSSF Scorecard][ossf-shield]][ossf-url]
+[![Celery][celery-shield]][celery-url]
+[![Pydantic][pydantic-shield]][pydantic-url]
+[![CI][ci-shield]][ci-url]
 [![SonarCloud][sonar-cloud-shield]][sonar-cloud-url]
 
-The Repository Scanner (RESC) is a tool used to detect secrets in source code management and version control systems 
-(e.g. GitHub, BitBucket, or Azure DevOps). Among the types of secrets that the Repository Scanner detects are credentials, 
-passwords, tokens, API keys, and certificates. The tool is maintained and updated by the ABN AMRO Bank to match the 
-constantly changing cyber security landscape. 
+> [!NOTE]  
+> ## This component is part of Repository Scanner - [resc](https://github.com/abnamro/repository-scanner)
 
-The Repository Scanner was created to prevent that credentials and other sensitive information are left unprotected in code repositories.
-Exposing sensitive information in such a way can have severe consequences for the security posture of an organization. An attacker can use 
-the data to compromise the organization's network. This can be prevented by scanning a repository with the RESC tool. It marks all the 
-instances of exposed sensitive information in the source code.
-
-![RESC-Demo](/images/RESC_Preview.gif)
-
-## 📒 Table of contents
-* [Links](#links)
-* [Technical information](#technical-information)
-* [Getting started](#getting-started)
-* [Dummy data generation](#dummy-data-generation-guide)
-* [Contributing guidelines](#contribution-guide)
-* [Contact](#contact)
-* [License](#license)
-* [Acknowledgments](#acknowledgement)
-
-## 🔗 Links <a name = "links"></a>
-
-Throughout the process of open sourcing this project, the ABN AMRO Bank created a series of articles that describe the
-capabilities of the Repository Scanner (RESC) tool, the architectural decisions behind it, and the road to open sourcing 
-RESC. With the articles, users can look "behind the scenes" and gain a deeper understanding of the tool.  
-
-[ABN AMRO Open Source project: Repository Scanner](https://medium.com/abn-amro-developer/abn-amro-open-source-project-repository-scanner-cf62aa62b059)  
-[Open Source Project Update: Repository Scanner](https://medium.com/abn-amro-developer/open-source-project-update-repository-scanner-b44bc3f3921a)  
-[Open Source Project Update: Repository Scanner 2.0.0](https://medium.com/abn-amro-developer/open-source-project-update-repository-scanner-2-0-0-a2120f8ccf4b)  
-
-### Releases
-Every notable release of the Repository Scanner tool, the changes that come with the release, and the release date can be found on the [Releases](https://github.com/abnamro/repository-scanner/releases) page.
-
-## 🛠️ Technical information <a name = "technical-information"></a>
-The technologies that the Repository Scanner Tool is built on is listed below. There is also a list with direct links to the individual
-components of RESC.
-
-* [![Python][Python.org]][Python-url]
-* [![Docker][Docker.com]][Docker-url]
-* [![Kubernetes][Kubernetes.io]][Kubernetes-url]
-* [![Helm][Helm.sh]][Helm-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![RabbitMQ][RabbitMQ.com]][RabbitMQ-url]
-* [![Redis][Redis.com]][Redis-url]  
-
-### RESC high-level overview
-The diagram below gives a high-level overview of the Repository Scanner tool. All the different components of the
-tool and the technologies that it utilizes are explained in detail here. As shown in the diagram, all the components mentioned
-are run as Docker containers in a Kubernetes ecosystem.
-
-* [RESC-Frontend](https://github.com/abnamro/repository-scanner/tree/main/components/resc-frontend): The RESC-Frontend is a fully responsive dashboard application developed using TypeScript, Vue 3 and the BootstrapVueNext framework (based on Bootstrap 5). It has screens for Analytics, Repositories, Scan Findings, Rule Analytics, and Rule Pack.
-* [RESC-Backend](https://github.com/abnamro/repository-scanner/tree/main/components/resc-backend): The RESC-Backend is the backend of the Repository Scanner tool. The RESC-Backend consists of RabbitMQ users and queue creation, Database models, the RESC Web service, and Alembic scripts for database migration. The RESC Web service is created using FASTAPI.
-* [RESC-VCS-Scanner](https://github.com/abnamro/repository-scanner/tree/main/components/resc-vcs-scanner): RESC-VCS-Scanner, which runs as a celery worker, gathers repositories from the repositories queue and carries out a secret scan. Gitleaks is used as the scanner to find secrets.
-* [RESC-VCS-Scraper](https://github.com/abnamro/repository-scanner/tree/main/components/resc-vcs-scraper): All projects and repositories from supported VCS providers such as Bitbucket, Azure Repos, and GitHub are gathered by the RESC-VCS-SCRAPER. This component contains the VCS-Scraper-Projects and VCS-Scraper-Repositories as its primary modules.
-
-Please visit [architecture.md](https://github.com/abnamro/repository-scanner/blob/main/docs/architecture.md) for more information.
-
-## 🛠️ Getting started <a name = "getting-started"></a>
-Please refer [resc-helm-wizard](https://github.com/abnamro/repository-scanner/blob/main/deployment/resc-helm-wizard/README.md) for an interactive and easy way to deploy RESC on a Kubernetes cluster.
-
-##  Dummy data generation <a name = "dummy-data-generation-guide"></a>
-A standalone utility to generate dummy data for testing purposes is located at `./components/resc_backend/src/resc_backend/bin/dummy-data-generator`. More details can be found [here](./components/resc-backend/src/resc_backend/bin/dummy-data-generator/README.md)
-
-## 💁🏽 Contributing guidelines <a name = "contribution-guide"></a>
-We believe that innovating together can lead to the most incredible results and developments. Contributions to the Repository Scanner tool are therefore highly encouraged. We have created [guidelines](https://github.com/abnamro/repository-scanner/blob/main/contributing.md) that we expect contributors to the project to follow.  By contributing to the project you also agree with our [Code of Conduct](https://github.com/abnamro/repository-scanner/blob/main/code-of-conduct.md).
-
-## 📧    Contact <a name = "contact"></a>
-If you need to get in touch with the maintainers of the Repository Scanner tool, please use the following e-mail address: [resc@nl.abnamro.com](mailto:resc@nl.abnamro.com).
-
-## ⚖️ License <a name = "license"></a>
-The Repository Scanner (RESC) Tool is licensed under the [MIT](https://github.com/abnamro/repository-scanner/blob/main/LICENSE.md) License.
+<!-- TABLE OF CONTENTS -->
+## Table of Contents
+1. [About the component](#about-the-component)
+2. [Getting started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Run locally from source](#run-locally-from-source)
+    - [Run locally using docker](#run-locally-using-docker)
+3. [Testing](#testing)
 
 
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-Since the Repository Scanner (RESC) makes use of [GitLeaks](https://github.com/zricethezav/gitleaks), we want to give Zachary Rice credits for creating and maintaining GitLeaks. GitLeaks has helped many organizations in securing their codebases for any leaked secrets.
+<!-- ABOUT THE COMPONENT -->
+## About the component
+The RESC-VCS-Scraper component collects all projects and repositories from multiple VCS providers. The supported VCS providers are Bitbucket, Azure Repos, and GitHub.
 
+This component includes two main modules, the project collector and the repository collector.
+The project collector collects all projects and sends them to the project queue. The repository collector collects projects from the projects queue, fetches its corresponding repositories, and sends them to the repository queue.
+
+<!-- GETTING STARTED -->
+## Getting started
+
+These instructions will help you to get a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+- [Git](https://git-scm.com/downloads)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Python 3.9.0](https://www.python.org/downloads/release/python-390/)
+
+### Run locally from source
+<details>
+  <summary>Preview</summary>
+  <b>Prerequisites:</b> RabbitMQ must be up and running locally.</br>
+  If you have already deployed RESC through helm in Kubernetes, then rabbitmq is already running for you.</br> 
+  Clone the repository, open the Git Bash terminal from /components/resc-vcs-scraper folder, and run below commands.  
+
+  #### 1. Create virtual environment:
+  ```bash
+  cd components/resc-vcs-scraper
+  pip install virtualenv
+  virtualenv venv
+  source venv/Scripts/activate
+  ```
+ #### 2. Install resc_vcs_scraper package:
+  ```bash
+  pip install -e .
+  ```
+ #### 3. Set below environment variables:
+
+ ```bash
+  export RESC_RABBITMQ_SERVICE_HOST=127.0.0.1   #  The hostname/IP address of the rabbitmq server
+  export RESC_RABBITMQ_SERVICE_PORT_AMQP=30902  #  The amqp port of the rabbitmq server
+  export RABBITMQ_DEFAULT_VHOST=resc-rabbitmq   #  The virtual host name of the rabbitmq server
+  export RABBITMQ_QUEUES_USERNAME=queue_user    #  The username used to connect to the rabbitmq projects and repositories topics
+  export RABBITMQ_QUEUES_PASSWORD="" # The password used to connect to the rabbitmq projects and repositories topics, can be found for the value of queues_password field in /deployment/kubernetes/example-values.yaml file
+  export VCS_INSTANCES_FILE_PATH="" # The absolute path to vcs_instances_config.json file containing the vcs instances definitions
+  export GITHUB_PUBLIC_USERNAME="" # Your GitHub username
+  export GITHUB_PUBLIC_TOKEN="" #  Your GitHub personal access token
+ ```
+ 
+ You need to replace with correct values for RABBITMQ_QUEUES_PASSWORD, VCS_INSTANCES_FILE_PATH, GITHUB_PUBLIC_USERNAME and GITHUB_PUBLIC_TOKEN.  
+
+ #### 4. Run the `collect_projects` task:  
+  `collect_projects` task collects all projects from a given Version Control System Instance, then writes the found projects to a RabbitMQ channel called 'projects'. 
+
+  This can be done via the command  
+  ```bash
+  collect_projects
+```
+
+#### Structure of vcs instances config json
+The vcs_instances_config.json file must have the following format. 
+_**Note:**_ You can add multiple vcs instances.
+<details>
+  <summary>Preview</summary>
+
+Example:
+```json
+{
+  "vcs_instance_1": {
+    "name": "GITHUB_PUBLIC",
+	"scope": ["kubernetes"], 
+    "exceptions": [],
+    "provider_type": "GITHUB_PUBLIC",
+    "hostname": "github.com",
+    "port": "443",
+    "scheme": "https",
+    "username": "GITHUB_PUBLIC_USERNAME",
+    "token": "GITHUB_PUBLIC_TOKEN",
+    "organization": ""
+  }
+}
+```
+* scope: List of GitHub accounts you want to scan.
+  For example, let's say you want to scan all the repositories for the following Github accounts.
+  https://github.com/kubernetes  
+  https://github.com/docker
+  
+  Then you need to add to the scope the following accounts like : ["kubernetes", "docker"]. All the repositories from those accounts will be scanned. 
+* exceptions (optional): If you want to exclude any account from scan, then add it to exceptions. Default is empty exception.
+
+The **output** messages of `collect_projects` command has the following format:
+
+```json
+{
+  "project_key": "kubernetes",
+  "vcs_instance_name": "GITHUB_PUBLIC",
+}
+```
+</details>
+
+ #### 5. Run collect all repositories task:  
+ This task collects all repositories from a single VCS project, then writes the found repositories to a RabbitMQ channel called 'repositories'.
+
+  This can be done via the command:
+   ```bash
+   celery -A vcs_scraper.repository_collector.common worker --loglevel=INFO -E -Q projects
+   ```
+</details>
+
+### Run locally using Docker
+<details>
+  <summary>Preview</summary>
+Run the RESC VCS Scraper Docker image locally by running the following commands:
+
+- Pull the Docker image from registry: 
+```bash
+docker pull rescabnamro/resc-vcs-scraper:latest
+```
+
+- Alternatively, build the Docker image locally by running: 
+```bash
+docker build -t rescabnamro/resc-vcs-scraper:latest .
+```
+
+- Run the vcs-scraper by using below command:
+```bash
+docker run -v <path to vcs_instances_config.json in your local system>:/tmp/vcs_instances_config.json -e RESC_RABBITMQ_SERVICE_HOST="host.docker.internal" -e RESC_RABBITMQ_SERVICE_AMQP_PORT=30902 -e RABBITMQ_DEFAULT_VHOST=resc-rabbitmq -e RABBITMQ_QUEUES_USERNAME=queue_user -e RABBITMQ_QUEUES_PASSWORD="<the password of queue_user>" -e VCS_INSTANCES_FILE_PATH="/tmp/vcs_instances_config.json" -e GITHUB_PUBLIC_USERNAME="<your github username>" -e GITHUB_PUBLIC_TOKEN="<your github personal access token>" --name resc-vcs-scraper rescabnamro/resc-vcs-scraper:latest collect_projects  
+```
+
+To create vcs_instances_config.json file, refer: [Structure of vcs_instances_config.json](#structure-of-vcs-instances-config-json)
+</details>
+
+## Testing
+[(Back to top)](#table-of-contents)
+
+Run below commands to make sure that the unit tests are running and that the code matches quality standards:
+
+_**Note:**_ To run these tests you need to install [tox](https://pypi.org/project/tox/). This can be done on Linux and Windows with Git Bash.
+```bash
+pip install tox      # install tox locally
+
+tox -v -e sort       # Run this command to validate the import sorting
+tox -v -e lint       # Run this command to lint the code according to this repository's standard
+tox -v -e pytest     # Run this command to run the unit tests
+tox -v               # Run this command to run all of the above tests
+```
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[maintainer-shield]: https://img.shields.io/badge/maintainer-%40ABNAMRO-09996B
-[maintainer-url]: https://github.com/ABNAMRO
-[license-shield]: https://img.shields.io/github/license/abnamro/repository-scanner
-[license-url]: https://github.com/abnamro/repository-scanner/blob/main/LICENSE.md
-[launched-shield]: https://img.shields.io/badge/launched-DEC%202022-teal
-[launched-url]: https://github.com/abnamro/repository-scanner/blob/main/LICENSE.md
-[updated-shield]: https://img.shields.io/github/last-commit/abnamro/repository-scanner?color=blue&label=updated
-[updated-url]: https://github.com/abnamro/repository-scanner/commits/main
-[build-shield]: https://img.shields.io/github/actions/workflow/status/abnamro/repository-scanner/backend-ci.yaml?logo=github
-[build-url]: https://github.com/abnamro/repository-scanner/actions
-[version-shield]: https://img.shields.io/github/v/release/abnamro/repository-scanner?color=blueviolet&label=version
-[version-url]: https://www.github.com/abnamro/repository-scanner/releases/latest
-[downloads-shield]: https://img.shields.io/github/downloads/abnamro/repository-scanner/total?color=blue
-[downloads-url]: https://pepy.tech/project/resc-backend
-[docker-pulls-shield]: https://img.shields.io/docker/pulls/rescabnamro/resc-backend.svg
-[docker-pulls-url]: https://hub.docker.com/r/rescabnamro/resc-backend
-[openssf-shield]: https://www.bestpractices.dev/projects/7799/badge
-[openssf-url]: https://www.bestpractices.dev/projects/7799
-[sonar-cloud-shield]: https://sonarcloud.io/api/project_badges/measure?project=abnamro-resc_resc-backend&metric=alert_status
-[sonar-cloud-url]: https://sonarcloud.io/organizations/abnamro-resc/projects
 [python-shield]: https://img.shields.io/badge/Python-3670A0?style=flat&logo=python&logoColor=ffdd54
 [python-url]: https://www.python.org
-[vuejs-shield]: https://img.shields.io/badge/VueJS-%2335495e.svg?style=flat&logo=vuedotjs&logoColor=%234FC08D
-[vuejs-url]: https://vuejs.org
-[docker-shield]: https://img.shields.io/badge/Docker-2CA5E0?style=flat&logo=docker&logoColor=white
-[docker-url]: https://www.docker.com
-[k8-shield]: https://img.shields.io/badge/kubernetes-326ce5.svg?&style=flat&logo=kubernetes&logoColor=white
-[k8-url]: https://kubernetes.io
-[helm-shield]: https://img.shields.io/badge/Helm-0F1689?style=flat&logo=Helm&labelColor=0F1689
-[helm-url]: https://helm.sh
-
-[ossf-shield]: https://api.securityscorecards.dev/projects/github.com/abnamro/repository-scanner/badge
-[ossf-url]: https://securityscorecards.dev/viewer/?uri=github.com/abnamro/repository-scanner
-
-[Python.org]: https://img.shields.io/badge/Python-2b5b84?style=for-the-badge&logo=python&logoColor=white
-[Python-url]: https://www.python.org/
-<!-- for-the-badge is broken on TypeScript... use flat instead -->
-[typescript-shield]: https://shields.io/badge/TypeScript-3178C6?style=flat&logo=TypeScript&logoColor=FFF
-[typescript-url]: https://www.typescriptlang.org/
-[Docker.com]: https://img.shields.io/badge/Docker-0b214a?style=for-the-badge&logo=docker&logoColor=white
-[Docker-url]: https://www.docker.com/
-[Kubernetes.io]: https://img.shields.io/badge/Kubernetes-3371e3?style=for-the-badge&logo=kubernetes&logoColor=white
-[Kubernetes-url]: https://www.kubernetes.io/
-[Helm.sh]: https://img.shields.io/badge/Helm-091c84?style=for-the-badge&logo=helm&logoColor=white
-[Helm-url]: https://helm.sh/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[RabbitMQ.com]: https://img.shields.io/badge/RabbitMQ-ff6600?style=for-the-badge&logo=rabbitmq&logoColor=white
-[RabbitMQ-url]: https://rabbitmq.com/
-[Redis.com]: https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white
-[Redis-url]: https://redis.com/
+[celery-shield]: https://img.shields.io/badge/Celery-green.svg?logo=celery&style=flat
+[celery-url]: https://docs.celeryq.dev
+[pydantic-shield]: https://img.shields.io/badge/Pydantic-e92063.svg?logo=pydantic&style=flat
+[pydantic-url]: https://docs.pydantic.dev
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/abnamro/repository-scanner/vcs-scraper-ci.yaml?style=flat&logo=github
+[ci-url]: https://github.com/abnamro/repository-scanner/actions/workflows/vcs-scraper-ci.yaml
+[sonar-cloud-shield]: https://sonarcloud.io/api/project_badges/measure?project=abnamro-resc_resc-vcs-scraper&metric=alert_status
+[sonar-cloud-url]: https://sonarcloud.io/summary/new_code?id=abnamro-resc_resc-vcs-scraper
