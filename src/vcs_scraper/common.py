@@ -1,7 +1,7 @@
 # Standard Library
 import logging.config
 import sys
-from distutils.sysconfig import get_python_lib
+import sysconfig
 from os import path
 from typing import Dict, List
 
@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_logging_settings_path():
-    if path.isfile(get_python_lib() + "/vcs_scraper"):
-        base_dir = get_python_lib() + "/vcs_scraper"
+    if path.isfile(sysconfig.get_path('purelib') + "/vcs_scraper"):
+        base_dir = sysconfig.get_path('purelib') + "/vcs_scraper"
     else:
         base_dir = path.dirname(__file__)
 
