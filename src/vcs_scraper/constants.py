@@ -1,4 +1,3 @@
-
 REPOSITORY_QUEUE = "repositories"
 PROJECT_QUEUE = "projects"
 

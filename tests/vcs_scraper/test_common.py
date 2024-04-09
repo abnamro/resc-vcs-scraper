@@ -16,8 +16,13 @@ THIS_DIR = Path(__file__).parent
 
 def test_load_vcs_instances_into_map():
     my_data_path = THIS_DIR.parent / "fixtures/working_vcs_instances.json"
-    with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
-        vcs_instances_map: Dict[str, VCSInstance] = load_vcs_instances_into_map(str(my_data_path))
+    with mock.patch.dict(
+        os.environ,
+        {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"},
+    ):
+        vcs_instances_map: Dict[str, VCSInstance] = load_vcs_instances_into_map(
+            str(my_data_path)
+        )
     element1 = list(vcs_instances_map.keys())[0]
     element2 = list(vcs_instances_map.keys())[1]
 
@@ -46,7 +51,6 @@ def test_load_vcs_instances_into_map():
 
 @patch("sys.exit")
 def test_load_vcs_instances_into_map_with_missing_org(sys_exit):
-
     my_data_path = THIS_DIR.parent / "fixtures/missing_org_ado_vcs_instances.json"
     assert {} == load_vcs_instances_into_map(str(my_data_path))
     assert sys_exit.called

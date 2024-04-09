@@ -30,24 +30,34 @@ class ErrorTests(TestCase):
     # Make sure to set required env vars to empty first
     @mock.patch.dict(os.environ, {"RESC_RABBITMQ_SERVICE_HOST": ""})
     def test_validate_environment_required(self):
-        self.assertRaises(EnvironmentError, validate_environment,
-                          REQUIRED_ENV_VARS)
+        self.assertRaises(EnvironmentError, validate_environment, REQUIRED_ENV_VARS)
 
 
 def test_create_bitbucket_client_from_env():
-    with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
-        vcs_instance = VCSInstance(name="test_name",
-                                   provider_type=BITBUCKET,
-                                   hostname="fake.bitbucket.com",
-                                   port=443,
-                                   scheme="https",
-                                   username="VCS_INSTANCE_USERNAME",
-                                   token="VCS_INSTANCE_TOKEN",
-                                   exceptions=[],
-                                   scope=[],)
+    with mock.patch.dict(
+        os.environ,
+        {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"},
+    ):
+        vcs_instance = VCSInstance(
+            name="test_name",
+            provider_type=BITBUCKET,
+            hostname="fake.bitbucket.com",
+            port=443,
+            scheme="https",
+            username="VCS_INSTANCE_USERNAME",
+            token="VCS_INSTANCE_TOKEN",
+            exceptions=[],
+            scope=[],
+        )
     bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(vcs_instance)
     session = requests.Session()
-    session.headers['Authorization'] = f'Bearer {vcs_instance.token}'
-    assert bitbucket_client.url == f"{vcs_instance.scheme}://{vcs_instance.hostname}:{vcs_instance.port}"
+    session.headers["Authorization"] = f"Bearer {vcs_instance.token}"
+    assert (
+        bitbucket_client.url
+        == f"{vcs_instance.scheme}://{vcs_instance.hostname}:{vcs_instance.port}"
+    )
     assert bitbucket_client.api_client.url == bitbucket_client.url
-    assert bitbucket_client.api_client._session.headers['Authorization'] == session.headers['Authorization']
+    assert (
+        bitbucket_client.api_client._session.headers["Authorization"]
+        == session.headers["Authorization"]
+    )

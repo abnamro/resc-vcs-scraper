@@ -7,7 +7,6 @@ from vcs_scraper.model import Repository, VCSInstance
 
 
 class VCSConnector(metaclass=abc.ABCMeta):
-
     @property
     @abc.abstractmethod
     def api_client(self):
@@ -27,7 +26,9 @@ class VCSConnector(metaclass=abc.ABCMeta):
 
     @staticmethod
     @abc.abstractmethod
-    def export_repository(repository_information: Dict, latest_commit, vcs_instance_name: str) -> Repository:
+    def export_repository(
+        repository_information: Dict, latest_commit, vcs_instance_name: str
+    ) -> Repository:
         pass
 
     @staticmethod

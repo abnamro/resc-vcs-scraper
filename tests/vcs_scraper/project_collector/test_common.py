@@ -16,58 +16,74 @@ RABBITMQ_QUEUES_USERNAME = "fake_rabbituser"
 RABBITMQ_QUEUES_PASSWORD = "fake_password"
 VCS_INSTANCES_FILE_PATH = "fake_path.json"
 
-with mock.patch.dict(os.environ, {"RESC_RABBITMQ_SERVICE_HOST": RESC_RABBITMQ_SERVICE_HOST,
-                                  "RABBITMQ_DEFAULT_VHOST": RABBITMQ_DEFAULT_VHOST,
-                                  "RABBITMQ_QUEUES_USERNAME": RABBITMQ_QUEUES_USERNAME,
-                                  "RABBITMQ_QUEUES_PASSWORD": RABBITMQ_QUEUES_PASSWORD,
-                                  "VCS_INSTANCES_FILE_PATH": VCS_INSTANCES_FILE_PATH}):
+with mock.patch.dict(
+    os.environ,
+    {
+        "RESC_RABBITMQ_SERVICE_HOST": RESC_RABBITMQ_SERVICE_HOST,
+        "RABBITMQ_DEFAULT_VHOST": RABBITMQ_DEFAULT_VHOST,
+        "RABBITMQ_QUEUES_USERNAME": RABBITMQ_QUEUES_USERNAME,
+        "RABBITMQ_QUEUES_PASSWORD": RABBITMQ_QUEUES_PASSWORD,
+        "VCS_INSTANCES_FILE_PATH": VCS_INSTANCES_FILE_PATH,
+    },
+):
     from vcs_scraper.project_collector import common  # noqa: E402  # isort:skip
 
-with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
-    ado_vcs_instance = VCSInstance(name="test_name1",
-                                   provider_type=AZURE_DEVOPS,
-                                   hostname="fake.ado.com",
-                                   port=443,
-                                   scheme="https",
-                                   username="VCS_INSTANCE_USERNAME",
-                                   token="VCS_INSTANCE_TOKEN",
-                                   exceptions=[],
-                                   scope=[])
+with mock.patch.dict(
+    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
+):
+    ado_vcs_instance = VCSInstance(
+        name="test_name1",
+        provider_type=AZURE_DEVOPS,
+        hostname="fake.ado.com",
+        port=443,
+        scheme="https",
+        username="VCS_INSTANCE_USERNAME",
+        token="VCS_INSTANCE_TOKEN",
+        exceptions=[],
+        scope=[],
+    )
 
-    btbk_vcs_instance = VCSInstance(name="test_name2",
-                                    provider_type=BITBUCKET,
-                                    hostname="fake.bitbucket.com",
-                                    port=443,
-                                    scheme="https",
-                                    username="VCS_INSTANCE_USERNAME",
-                                    token="VCS_INSTANCE_TOKEN",
-                                    exceptions=[],
-                                    scope=[])
-    btbk_scoped_vcs_instance = VCSInstance(name="test_name2",
-                                           provider_type=BITBUCKET,
-                                           hostname="fake.bitbucket.com",
-                                           port=443,
-                                           scheme="https",
-                                           username="VCS_INSTANCE_USERNAME",
-                                           token="VCS_INSTANCE_TOKEN",
-                                           exceptions=[],
-                                           scope=["project1"])
+    btbk_vcs_instance = VCSInstance(
+        name="test_name2",
+        provider_type=BITBUCKET,
+        hostname="fake.bitbucket.com",
+        port=443,
+        scheme="https",
+        username="VCS_INSTANCE_USERNAME",
+        token="VCS_INSTANCE_TOKEN",
+        exceptions=[],
+        scope=[],
+    )
+    btbk_scoped_vcs_instance = VCSInstance(
+        name="test_name2",
+        provider_type=BITBUCKET,
+        hostname="fake.bitbucket.com",
+        port=443,
+        scheme="https",
+        username="VCS_INSTANCE_USERNAME",
+        token="VCS_INSTANCE_TOKEN",
+        exceptions=[],
+        scope=["project1"],
+    )
 
-    btbk_with_exceptions_vcs_instance = VCSInstance(name="test_name2",
-                                                    provider_type=BITBUCKET,
-                                                    hostname="fake.bitbucket.com",
-                                                    port=443,
-                                                    scheme="https",
-                                                    username="VCS_INSTANCE_USERNAME",
-                                                    token="VCS_INSTANCE_TOKEN",
-                                                    exceptions=["project1"],
-                                                    scope=[])
+    btbk_with_exceptions_vcs_instance = VCSInstance(
+        name="test_name2",
+        provider_type=BITBUCKET,
+        hostname="fake.bitbucket.com",
+        port=443,
+        scheme="https",
+        username="VCS_INSTANCE_USERNAME",
+        token="VCS_INSTANCE_TOKEN",
+        exceptions=["project1"],
+        scope=[],
+    )
 
 
-@patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_all_projects")
+@patch(
+    "vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_all_projects"
+)
 @patch.object(Celery, "send_task")
 def test_collect_ado_projects_with_projects(celery_send_task, get_all_projects):
-
     all_projects = ["project1", "project2"]
     get_all_projects.side_effect = [all_projects]
     common.collect_projects_from_vcs_instance(ado_vcs_instance)
@@ -79,7 +95,9 @@ def test_collect_ado_projects_with_projects(celery_send_task, get_all_projects):
         assert kwargs["queue"] == PROJECT_QUEUE
 
 
-@patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_all_projects")
+@patch(
+    "vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_all_projects"
+)
 @patch.object(Celery, "send_task")
 def test_collect_ado_projects_without_projects(celery_send_task, get_all_projects):
     all_projects = list()
@@ -90,7 +108,9 @@ def test_collect_ado_projects_without_projects(celery_send_task, get_all_project
     assert celery_send_task.call_count == 0
 
 
-@patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects")
+@patch(
+    "vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects"
+)
 @patch.object(Celery, "send_task")
 def test_collect_btbk_projects_with_projects(celery_send_task, get_all_projects):
     all_projects = ["project1", "project2"]
@@ -104,7 +124,9 @@ def test_collect_btbk_projects_with_projects(celery_send_task, get_all_projects)
         assert kwargs["queue"] == PROJECT_QUEUE
 
 
-@patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects")
+@patch(
+    "vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects"
+)
 @patch.object(Celery, "send_task")
 def test_collect_btbk_projects_without_projects(celery_send_task, get_all_projects):
     all_projects = list()
@@ -115,12 +137,19 @@ def test_collect_btbk_projects_without_projects(celery_send_task, get_all_projec
     assert celery_send_task.call_count == 0
 
 
-@patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.project_exists")
-@patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects")
+@patch(
+    "vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.project_exists"
+)
+@patch(
+    "vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects"
+)
 @patch.object(Celery, "send_task")
-def test_collect_btbk_projects_with_scope(celery_send_task, all_projects, project_exists):
+def test_collect_btbk_projects_with_scope(
+    celery_send_task, all_projects, project_exists
+):
     def mock_project_exists(project_key):
         return project_key == "project1"
+
     assert btbk_scoped_vcs_instance.scope == ["project1"]
 
     project_exists.side_effect = mock_project_exists
@@ -130,7 +159,9 @@ def test_collect_btbk_projects_with_scope(celery_send_task, all_projects, projec
     assert not all_projects.called
 
 
-@patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects")
+@patch(
+    "vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_all_projects"
+)
 @patch.object(Celery, "send_task")
 def test_collect_btbk_projects_with_exceptions(celery_send_task, get_all_projects):
     all_projects = ["project1", "project2"]

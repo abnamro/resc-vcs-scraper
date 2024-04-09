@@ -25,7 +25,7 @@ class BitbucketConnector(VCSConnector):
             host=vcs_instance.hostname,
             scheme=vcs_instance.scheme,
             port=vcs_instance.port,
-            access_token=vcs_instance.token
+            access_token=vcs_instance.token,
         )
         return bitbucket_client
 
@@ -33,19 +33,23 @@ class BitbucketConnector(VCSConnector):
     def api_client(self):
         if not self._api_client:
             session = requests.Session()
-            session.headers['Authorization'] = f"Bearer {self.access_token}"
+            session.headers["Authorization"] = f"Bearer {self.access_token}"
             self._api_client = Bitbucket(
-                url=self.url,
-                session=session,
-                proxies={"no_proxy": self.proxy}
+                url=self.url, session=session, proxies={"no_proxy": self.proxy}
             )
         return self._api_client
 
     def get_all_projects(self):
         try:
             return [project["key"] for project in self.api_client.project_list()]
-        except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout, requests.exceptions.ProxyError,
-                requests.exceptions.ReadTimeout, requests.exceptions.SSLError, requests.exceptions.HTTPError) as ex:
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.ConnectTimeout,
+            requests.exceptions.ProxyError,
+            requests.exceptions.ReadTimeout,
+            requests.exceptions.SSLError,
+            requests.exceptions.HTTPError,
+        ) as ex:
             raise ConnectionError(ex) from ex
 
     def project_exists(self, project_key: str) -> bool:
@@ -56,8 +60,11 @@ class BitbucketConnector(VCSConnector):
 
     def get_latest_commit(self, project_key, repository_id):
         last_commit = None
-        latest_edited_branch = list(self.api_client.get_branches(project_key, repository_id,
-                                                                 order_by="MODIFICATION", limit=1))
+        latest_edited_branch = list(
+            self.api_client.get_branches(
+                project_key, repository_id, order_by="MODIFICATION", limit=1
+            )
+        )
         if latest_edited_branch:
             last_commit = latest_edited_branch[0]["latestCommit"]
         return last_commit
@@ -70,7 +77,9 @@ class BitbucketConnector(VCSConnector):
         return ""
 
     @staticmethod
-    def export_repository(repository_information: Dict, latest_commit: str, vcs_instance_name: str) -> Repository:
+    def export_repository(
+        repository_information: Dict, latest_commit: str, vcs_instance_name: str
+    ) -> Repository:
         """
         A method which generate a repositoryInfo object about a single bitbucket repository.
 
@@ -79,9 +88,13 @@ class BitbucketConnector(VCSConnector):
         :param latest_commit: Bitbucket latest_commit for a single repo as returned by the Bitbucket API.
         :return RepositoryInfo object
         """
-        http_clone_url = BitbucketConnector.get_clone_url(repository_information["links"]["clone"], "http")
-        repository = Repository(latest_commit=latest_commit,
-                                repository_url=http_clone_url,
-                                vcs_instance_name=vcs_instance_name,
-                                **map_bitbucket_repository(repository_information))
+        http_clone_url = BitbucketConnector.get_clone_url(
+            repository_information["links"]["clone"], "http"
+        )
+        repository = Repository(
+            latest_commit=latest_commit,
+            repository_url=http_clone_url,
+            vcs_instance_name=vcs_instance_name,
+            **map_bitbucket_repository(repository_information),
+        )
         return repository
