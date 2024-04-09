@@ -60,7 +60,7 @@ class GithubPublicConnector(VCSConnector):
         if commits:
             latest_commit = commits[0].sha
         self.api_client.per_page = None
-        return latest_commit
+        return latest_commit # type: ignore[return-value]
 
     @staticmethod
     def export_repository(repository_information: GithubRepository, latest_commit: str, vcs_instance_name: str) \
