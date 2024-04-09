@@ -7,7 +7,6 @@ from vcs_scraper.vcs_instances_parser import VCSInstance
 
 
 class VCSConnectorFactory:
-
     @staticmethod
     def create_client_from_vcs_instance(vcs_instance: VCSInstance):
         if vcs_instance.provider_type == BITBUCKET:
@@ -16,4 +15,6 @@ class VCSConnectorFactory:
             return AzureDevopsConnector.create_client_from_vcs_instance(vcs_instance)
         if vcs_instance.provider_type == GITHUB_PUBLIC:
             return GithubPublicConnector.create_client_from_vcs_instance(vcs_instance)
-        raise NotImplementedError(f"Provider {vcs_instance.provider_type} is not supported")
+        raise NotImplementedError(
+            f"Provider {vcs_instance.provider_type} is not supported"
+        )

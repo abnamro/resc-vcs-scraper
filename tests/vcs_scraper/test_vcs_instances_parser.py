@@ -15,9 +15,11 @@ THIS_DIR = Path(__file__).parent
 
 
 def test_parse_vcs_instances_file():
-
     my_data_path = THIS_DIR.parent / "fixtures/working_vcs_instances.json"
-    with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
+    with mock.patch.dict(
+        os.environ,
+        {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"},
+    ):
         vcs_instances = parse_vcs_instances_file(str(my_data_path))
     assert vcs_instances[0].provider_type == "AZURE_DEVOPS"
     assert vcs_instances[0].port == 443
@@ -43,18 +45,15 @@ def test_parse_vcs_instances_file():
 
 
 def test_parse_vcs_instances_file_with_missing_org():
-
     my_data_path = THIS_DIR.parent / "fixtures/missing_org_ado_vcs_instances.json"
     assert [] == parse_vcs_instances_file(str(my_data_path))
 
 
 def test_parse_vcs_instances_file_with_mal_formatted_file():
-
     my_data_path = THIS_DIR.parent / "fixtures/non_json.file"
     assert [] == parse_vcs_instances_file(str(my_data_path))
 
 
 def test_parse_vcs_instances_file_with_missing_file():
-
     my_data_path = THIS_DIR.parent / "fixtures/non_there.file"
     assert [] == parse_vcs_instances_file(str(my_data_path))

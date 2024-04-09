@@ -13,7 +13,6 @@ VCS_INSTANCES_FILE_PATH = "VCS_INSTANCES_FILE_PATH"
 DEBUG_MODE = "DEBUG_MODE"
 
 REQUIRED_ENV_VARS = [
-
     EnvironmentVariable(
         DEBUG_MODE,
         "Show debug log statements, if set to '0' only INFO logs and above will be shown.",

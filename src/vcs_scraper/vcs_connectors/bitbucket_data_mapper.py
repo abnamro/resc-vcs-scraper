@@ -1,4 +1,3 @@
-
 # First Party
 from vcs_scraper.dict_remapper import remap_dict_keys
 

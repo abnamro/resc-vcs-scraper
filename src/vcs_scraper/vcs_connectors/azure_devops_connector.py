@@ -10,7 +10,9 @@ from msrest.exceptions import ClientRequestError
 
 # First Party
 from vcs_scraper.model import Repository
-from vcs_scraper.vcs_connectors.azure_devops_data_mapper import map_azure_devops_repository
+from vcs_scraper.vcs_connectors.azure_devops_data_mapper import (
+    map_azure_devops_repository,
+)
 from vcs_scraper.vcs_connectors.vcs_connector import VCSConnector
 from vcs_scraper.vcs_instances_parser import VCSInstance
 
@@ -69,11 +71,14 @@ class AzureDevopsConnector(VCSConnector):
                 for project in get_projects_response:
                     all_projects.append(project.name)
                 if hasattr(get_projects_response, "continuation_token"):
-                    if get_projects_response.continuation_token is not None and \
-                            get_projects_response.continuation_token != "":
+                    if (
+                        get_projects_response.continuation_token is not None
+                        and get_projects_response.continuation_token != ""
+                    ):
                         # Get the next page of projects
                         get_projects_response = self.core_api_client.get_projects(
-                            continuation_token=get_projects_response.continuation_token)
+                            continuation_token=get_projects_response.continuation_token
+                        )
                 else:
                     # All projects have been retrieved
                     get_projects_response = None
@@ -86,18 +91,28 @@ class AzureDevopsConnector(VCSConnector):
         return bool(self.core_api_client.get_project(project_key))
 
     def get_repos(self, project_key):
-        return list(repo.as_dict() for repo in self.git_api_client.get_repositories(project_key))
+        return list(
+            repo.as_dict() for repo in self.git_api_client.get_repositories(project_key)
+        )
 
     def get_latest_commit(self, project_key, repository_id):
         latest_commit = None
         try:
-            latest_commits = list(self.git_api_client.get_commits(project=project_key, repository_id=repository_id,
-                                                                  top=1, search_criteria=None))
+            latest_commits = list(
+                self.git_api_client.get_commits(
+                    project=project_key,
+                    repository_id=repository_id,
+                    top=1,
+                    search_criteria=None,
+                )
+            )
             if latest_commits:
                 latest_commit = latest_commits[0].commit_id
         except AzureDevOpsServiceError as azure_exception:
-            logger.error(f"Failed to get latest commit for repository: {project_key}/{repository_id} --> "
-                         f"{azure_exception}")
+            logger.error(
+                f"Failed to get latest commit for repository: {project_key}/{repository_id} --> "
+                f"{azure_exception}"
+            )
         return latest_commit
 
     @staticmethod
@@ -108,7 +123,9 @@ class AzureDevopsConnector(VCSConnector):
         return ""
 
     @staticmethod
-    def export_repository(repository_information: Dict, latest_commit: str, vcs_instance_name: str) -> Repository:
+    def export_repository(
+        repository_information: Dict, latest_commit: str, vcs_instance_name: str
+    ) -> Repository:
         """
         A method which generate a repositoryInfo object about a single bitbucket repository.
 
@@ -117,8 +134,10 @@ class AzureDevopsConnector(VCSConnector):
         :param latest_commit: Azure Devops latest_commit for a single repo as returned by the Azure API.
         :return Repository object
         """
-        repository = Repository(latest_commit=latest_commit,
-                                vcs_instance_name=vcs_instance_name,
-                                **map_azure_devops_repository(repository_information))
+        repository = Repository(
+            latest_commit=latest_commit,
+            vcs_instance_name=vcs_instance_name,
+            **map_azure_devops_repository(repository_information),
+        )
 
         return repository

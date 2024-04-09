@@ -19,16 +19,20 @@ AZURE_DEVOPS_PORT = "443"
 AZURE_DEVOPS_ACCESS_TOKEN = "FAKE_TOKEN"
 AZURE_ORG = "no_company"
 
-with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
-    ado_vcs_instance = VCSInstance(name="test_name1",
-                                   provider_type=AZURE_DEVOPS,
-                                   hostname="fake.ado.com",
-                                   port=443,
-                                   scheme="https",
-                                   username="VCS_INSTANCE_USERNAME",
-                                   token="VCS_INSTANCE_TOKEN",
-                                   exceptions=[],
-                                   scope=[])
+with mock.patch.dict(
+    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
+):
+    ado_vcs_instance = VCSInstance(
+        name="test_name1",
+        provider_type=AZURE_DEVOPS,
+        hostname="fake.ado.com",
+        port=443,
+        scheme="https",
+        username="VCS_INSTANCE_USERNAME",
+        token="VCS_INSTANCE_TOKEN",
+        exceptions=[],
+        scope=[],
+    )
 
 
 def test_export_repository():
@@ -36,13 +40,15 @@ def test_export_repository():
         "project": {"name": "9999"},
         "name": "repo1",
         "id": "1234",
-        "web_url": "http://test.com/repo.git"
+        "web_url": "http://test.com/repo.git",
     }
 
     latest_commit = "abc123"
 
     vcs_instance_name = "test server"
-    result = AzureDevopsConnector.export_repository(repository_information, latest_commit, vcs_instance_name)
+    result = AzureDevopsConnector.export_repository(
+        repository_information, latest_commit, vcs_instance_name
+    )
 
     assert type(result) is Repository
     assert result.repository_name == "repo1"
@@ -52,8 +58,10 @@ def test_export_repository():
 
 
 def test_get_clone_url():
-    urls = [{"href": "ssh://git@test.com/repo.git", "name": "ssh"},
-            {"href": "http://test.com/repo.git", "name": "http"}]
+    urls = [
+        {"href": "ssh://git@test.com/repo.git", "name": "ssh"},
+        {"href": "http://test.com/repo.git", "name": "http"},
+    ]
 
     http_clone_url = AzureDevopsConnector.get_clone_url(urls, "http")
     ssh_clone_url = AzureDevopsConnector.get_clone_url(urls, "ssh")
@@ -65,10 +73,18 @@ def test_get_clone_url():
 
 
 def test_create_azure_devops_client_from_vcs_instance():
-    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(ado_vcs_instance)
+    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(
+        ado_vcs_instance
+    )
     session = requests.Session()
-    session.headers['Authorization'] = f'Bearer {ado_vcs_instance.token}'
-    assert azure_devops_client.url == f"{ado_vcs_instance.scheme}://{ado_vcs_instance.hostname}:" \
-                                      f"{ado_vcs_instance.port}/{ado_vcs_instance.organization}"
+    session.headers["Authorization"] = f"Bearer {ado_vcs_instance.token}"
+    assert (
+        azure_devops_client.url
+        == f"{ado_vcs_instance.scheme}://{ado_vcs_instance.hostname}:"
+        f"{ado_vcs_instance.port}/{ado_vcs_instance.organization}"
+    )
     assert azure_devops_client.api_client.base_url == azure_devops_client.url
-    assert azure_devops_client.api_client._config.credentials.password == ado_vcs_instance.token
+    assert (
+        azure_devops_client.api_client._config.credentials.password
+        == ado_vcs_instance.token
+    )
