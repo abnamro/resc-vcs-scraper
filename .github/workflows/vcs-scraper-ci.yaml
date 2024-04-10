@@ -54,6 +54,12 @@ jobs:
       run: |
         pip install -r test-requirements.txt
 
+    - name: Test with mypy
+      run: |
+        pip3 install mypy types-PyYAML
+        pip3 install types-requests
+        mypy src
+    
     - name: Test with pytest
       run: |
         tox -e pytest
