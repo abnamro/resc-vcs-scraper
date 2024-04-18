@@ -62,8 +62,8 @@ class GithubPublicConnector(VCSConnector):
         repo_details = self.api_client.get_repo(f"{project_key}/{repository_name}")
         return repo_details
 
-    def get_latest_commit(self, project_key: str, repository_id: str) -> str:
-        latest_commit = None
+    def get_latest_commit(self, project_key: str, repository_id: str) -> str | None:
+        latest_commit: str | None = None
         self.api_client.per_page = 1
         commits = self.api_client.get_repo(
             f"{project_key}/{repository_id}"
@@ -71,7 +71,7 @@ class GithubPublicConnector(VCSConnector):
         if commits:
             latest_commit = commits[0].sha
         self.api_client.per_page = None
-        return latest_commit  # type: ignore[return-value]
+        return latest_commit  
 
     @staticmethod
     def export_repository(
