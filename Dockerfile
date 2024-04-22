@@ -1,4 +1,5 @@
-FROM python:3.9.16-alpine3.17
+FROM python:3.12-alpine3.19
+
 
 ARG NAME="resc-vcs-scraper"
 ARG DESCRIPTION="Version Control Systems Scraper"

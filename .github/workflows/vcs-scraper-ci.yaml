@@ -39,7 +39,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.12"]
 
     steps:
     - name: Checkout repository
@@ -109,7 +109,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.12"]
     outputs:
       scraper_version: ${{ steps.getversion.outputs.scraper_version }}
     steps:
@@ -123,6 +123,7 @@ jobs:
 
       - name: Building python package
         run: |
+          python -m pip install --upgrade setuptools
           python -m pip install --upgrade pip
           pip install build wheel
           python setup.py sdist bdist_wheel
