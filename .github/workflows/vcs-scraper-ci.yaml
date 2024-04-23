@@ -55,6 +55,7 @@ jobs:
         pip install -r test-requirements.txt
 
     - name: Test with mypy
+      if: always()
       run: |
         pip3 install mypy types-PyYAML
         pip3 install types-requests
