@@ -33,7 +33,7 @@ These instructions will help you to get a copy of the project up and running on 
 ### Prerequisites
 - [Git](https://git-scm.com/downloads)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [Python 3.9.0](https://www.python.org/downloads/release/python-390/)
+- [Python 3.12.0](https://www.python.org/downloads/release/python-3120/)
 
 ### Run locally from source
 <details>
