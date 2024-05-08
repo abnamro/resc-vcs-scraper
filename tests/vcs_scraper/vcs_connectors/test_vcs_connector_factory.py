@@ -11,9 +11,7 @@ from vcs_scraper.vcs_connectors.azure_devops_connector import AzureDevopsConnect
 from vcs_scraper.vcs_connectors.bitbucket_connector import BitbucketConnector
 from vcs_scraper.vcs_connectors.vcs_connector_factory import VCSConnectorFactory
 
-with mock.patch.dict(
-    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
-):
+with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
     ado_vcs_instance = VCSInstance(
         name="test_name1",
         provider_type=AZURE_DEVOPS,

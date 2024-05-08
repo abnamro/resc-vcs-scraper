@@ -30,9 +30,7 @@ with mock.patch.dict(
 ):
     from vcs_scraper.repository_collector import common  # noqa: E402  # isort:skip
 
-with mock.patch.dict(
-    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
-):
+with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
     ado_vcs_instance = VCSInstance(
         name="test_name1",
         provider_type=AZURE_DEVOPS,
@@ -95,35 +93,23 @@ def test_send_tasks_to_celery_queue_without_tasks(celery_send_task):
     assert celery_send_task.call_count == 0
 
 
-@patch(
-    "vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_repos"
-)
+@patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_repos")
 def test_extract_ado_project_information_with_empty_project(mock_get):
-    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(
-        ado_vcs_instance
-    )
+    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(ado_vcs_instance)
     project_key = "mock_project_key"
 
     get_repos = list()
     mock_get.side_effect = [get_repos]
 
-    project_tasks = common.extract_project_information(
-        project_key, azure_devops_client, ado_vcs_instance.name
-    )
+    project_tasks = common.extract_project_information(project_key, azure_devops_client, ado_vcs_instance.name)
 
     assert project_tasks == []
 
 
-@patch(
-    "vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_repos"
-)
-@patch(
-    "vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_latest_commit"
-)
+@patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_repos")
+@patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_latest_commit")
 def test_extract_ado_project_information(mock_get_latest_commit, mock_get_repos):
-    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(
-        ado_vcs_instance
-    )
+    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(ado_vcs_instance)
     project_key = "GRID0001"
 
     repository_information = {
@@ -139,9 +125,7 @@ def test_extract_ado_project_information(mock_get_latest_commit, mock_get_repos)
     mock_get_repos.side_effect = [get_repos]
     mock_get_latest_commit.return_value = get_latest_commit
 
-    project_tasks = common.extract_project_information(
-        project_key, azure_devops_client, ado_vcs_instance.name
-    )
+    project_tasks = common.extract_project_information(project_key, azure_devops_client, ado_vcs_instance.name)
 
     assert len(project_tasks) == 1
     result = project_tasks[0]
@@ -153,29 +137,21 @@ def test_extract_ado_project_information(mock_get_latest_commit, mock_get_repos)
 
 @patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_repos")
 def test_extract_btbk_project_information_with_empty_project(mock_get):
-    bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(
-        btbk_vcs_instance
-    )
+    bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(btbk_vcs_instance)
     project_key = "mock_project_key"
 
     get_repos = list()
     mock_get.side_effect = [get_repos]
 
-    project_tasks = common.extract_project_information(
-        project_key, bitbucket_client, btbk_vcs_instance.name
-    )
+    project_tasks = common.extract_project_information(project_key, bitbucket_client, btbk_vcs_instance.name)
 
     assert project_tasks == []
 
 
 @patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_repos")
-@patch(
-    "vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_latest_commit"
-)
+@patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_latest_commit")
 def test_extract_btbk_project_information(mock_get_latest_commit, mock_get_repos):
-    bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(
-        btbk_vcs_instance
-    )
+    bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(btbk_vcs_instance)
     project_key = "PROJ"
 
     repository_information = {
@@ -197,9 +173,7 @@ def test_extract_btbk_project_information(mock_get_latest_commit, mock_get_repos
     mock_get_repos.side_effect = [get_repos]
     mock_get_latest_commit.return_value = get_latest_commit
 
-    project_tasks = common.extract_project_information(
-        project_key, bitbucket_client, btbk_vcs_instance.name
-    )
+    project_tasks = common.extract_project_information(project_key, bitbucket_client, btbk_vcs_instance.name)
 
     assert len(project_tasks) == 1
     result = project_tasks[0]

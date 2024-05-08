@@ -44,9 +44,7 @@ class GithubPublicConnector(VCSConnector):
         repository_list = []
         repos = list(self.api_client.get_user(project_key).get_repos())
         for repo in repos:
-            repo_details = self.get_repository_details(
-                project_key=project_key, repository_name=repo.name
-            )
+            repo_details = self.get_repository_details(project_key=project_key, repository_name=repo.name)
             repo_dict = {
                 "id": repo_details.id,
                 "project_key": repo_details.full_name.split("/")[0],
@@ -56,22 +54,18 @@ class GithubPublicConnector(VCSConnector):
             repository_list.append(repo_dict)
         return repository_list
 
-    def get_repository_details(
-        self, project_key: str, repository_name: str
-    ) -> GithubRepository:
+    def get_repository_details(self, project_key: str, repository_name: str) -> GithubRepository:
         repo_details = self.api_client.get_repo(f"{project_key}/{repository_name}")
         return repo_details
 
     def get_latest_commit(self, project_key: str, repository_id: str) -> str | None:
         latest_commit: str | None = None
         self.api_client.per_page = 1
-        commits = self.api_client.get_repo(
-            f"{project_key}/{repository_id}"
-        ).get_commits()
+        commits = self.api_client.get_repo(f"{project_key}/{repository_id}").get_commits()
         if commits:
             latest_commit = commits[0].sha
         self.api_client.per_page = None
-        return latest_commit  
+        return latest_commit
 
     @staticmethod
     def export_repository(
