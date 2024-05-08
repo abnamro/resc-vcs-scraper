@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_logging_settings_path():
-    if path.isfile(sysconfig.get_path('purelib') + "/vcs_scraper"):
-        base_dir = sysconfig.get_path('purelib') + "/vcs_scraper"
+    if path.isfile(sysconfig.get_path("purelib") + "/vcs_scraper"):
+        base_dir = sysconfig.get_path("purelib") + "/vcs_scraper"
     else:
         base_dir = path.dirname(__file__)
 
