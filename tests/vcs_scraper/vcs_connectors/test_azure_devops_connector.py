@@ -19,9 +19,7 @@ AZURE_DEVOPS_PORT = "443"
 AZURE_DEVOPS_ACCESS_TOKEN = "FAKE_TOKEN"
 AZURE_ORG = "no_company"
 
-with mock.patch.dict(
-    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
-):
+with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
     ado_vcs_instance = VCSInstance(
         name="test_name1",
         provider_type=AZURE_DEVOPS,
@@ -46,9 +44,7 @@ def test_export_repository():
     latest_commit = "abc123"
 
     vcs_instance_name = "test server"
-    result = AzureDevopsConnector.export_repository(
-        repository_information, latest_commit, vcs_instance_name
-    )
+    result = AzureDevopsConnector.export_repository(repository_information, latest_commit, vcs_instance_name)
 
     assert type(result) is Repository
     assert result.repository_name == "repo1"
@@ -73,18 +69,12 @@ def test_get_clone_url():
 
 
 def test_create_azure_devops_client_from_vcs_instance():
-    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(
-        ado_vcs_instance
-    )
+    azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(ado_vcs_instance)
     session = requests.Session()
     session.headers["Authorization"] = f"Bearer {ado_vcs_instance.token}"
     assert (
-        azure_devops_client.url
-        == f"{ado_vcs_instance.scheme}://{ado_vcs_instance.hostname}:"
+        azure_devops_client.url == f"{ado_vcs_instance.scheme}://{ado_vcs_instance.hostname}:"
         f"{ado_vcs_instance.port}/{ado_vcs_instance.organization}"
     )
     assert azure_devops_client.api_client.base_url == azure_devops_client.url
-    assert (
-        azure_devops_client.api_client._config.credentials.password
-        == ado_vcs_instance.token
-    )
+    assert azure_devops_client.api_client._config.credentials.password == ado_vcs_instance.token

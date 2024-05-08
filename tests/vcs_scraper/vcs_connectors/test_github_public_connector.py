@@ -13,9 +13,7 @@ from vcs_scraper.vcs_instances_parser import VCSInstance
 
 from vcs_scraper.vcs_connectors.github_public_connector import GithubPublicConnector  # noqa: E402  # isort:skip
 
-with mock.patch.dict(
-    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
-):
+with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
     github_public_vcs_instance = VCSInstance(
         name="test_name1",
         provider_type=GITHUB_PUBLIC,
@@ -34,9 +32,7 @@ AZURE_DEVOPS_PORT = "443"
 AZURE_DEVOPS_ACCESS_TOKEN = "FAKE_TOKEN"
 AZURE_ORG = "no_company"
 
-with mock.patch.dict(
-    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
-):
+with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
     ado_vcs_instance = VCSInstance(
         name="test_name1",
         provider_type=GITHUB_PUBLIC,
@@ -61,9 +57,7 @@ def test_export_repository_all_branches():
     latest_commit = "abc123"
 
     vcs_instance_name = "test server"
-    result = GithubPublicConnector.export_repository(
-        repository_information, latest_commit, vcs_instance_name
-    )
+    result = GithubPublicConnector.export_repository(repository_information, latest_commit, vcs_instance_name)
 
     assert type(result) is Repository
     assert result.project_key == "project1"
@@ -75,8 +69,8 @@ def test_export_repository_all_branches():
 
 
 def test_create_github_client_from_vcs_instance():
-    github_public_client: GithubPublicConnector = (
-        VCSConnectorFactory.create_client_from_vcs_instance(github_public_vcs_instance)
+    github_public_client: GithubPublicConnector = VCSConnectorFactory.create_client_from_vcs_instance(
+        github_public_vcs_instance
     )
     assert isinstance(github_public_client, GithubPublicConnector)
     assert isinstance(github_public_client.api_client, Github)

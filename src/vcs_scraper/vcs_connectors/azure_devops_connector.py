@@ -91,9 +91,7 @@ class AzureDevopsConnector(VCSConnector):
         return bool(self.core_api_client.get_project(project_key))
 
     def get_repos(self, project_key):
-        return list(
-            repo.as_dict() for repo in self.git_api_client.get_repositories(project_key)
-        )
+        return list(repo.as_dict() for repo in self.git_api_client.get_repositories(project_key))
 
     def get_latest_commit(self, project_key, repository_id):
         latest_commit = None
@@ -110,8 +108,7 @@ class AzureDevopsConnector(VCSConnector):
                 latest_commit = latest_commits[0].commit_id
         except AzureDevOpsServiceError as azure_exception:
             logger.error(
-                f"Failed to get latest commit for repository: {project_key}/{repository_id} --> "
-                f"{azure_exception}"
+                f"Failed to get latest commit for repository: {project_key}/{repository_id} --> " f"{azure_exception}"
             )
         return latest_commit
 
@@ -123,9 +120,7 @@ class AzureDevopsConnector(VCSConnector):
         return ""
 
     @staticmethod
-    def export_repository(
-        repository_information: Dict, latest_commit: str, vcs_instance_name: str
-    ) -> Repository:
+    def export_repository(repository_information: Dict, latest_commit: str, vcs_instance_name: str) -> Repository:
         """
         A method which generate a repositoryInfo object about a single bitbucket repository.
 

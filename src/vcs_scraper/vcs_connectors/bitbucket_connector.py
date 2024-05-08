@@ -34,9 +34,7 @@ class BitbucketConnector(VCSConnector):
         if not self._api_client:
             session = requests.Session()
             session.headers["Authorization"] = f"Bearer {self.access_token}"
-            self._api_client = Bitbucket(
-                url=self.url, session=session, proxies={"no_proxy": self.proxy}
-            )
+            self._api_client = Bitbucket(url=self.url, session=session, proxies={"no_proxy": self.proxy})
         return self._api_client
 
     def get_all_projects(self):
@@ -61,9 +59,7 @@ class BitbucketConnector(VCSConnector):
     def get_latest_commit(self, project_key, repository_id):
         last_commit = None
         latest_edited_branch = list(
-            self.api_client.get_branches(
-                project_key, repository_id, order_by="MODIFICATION", limit=1
-            )
+            self.api_client.get_branches(project_key, repository_id, order_by="MODIFICATION", limit=1)
         )
         if latest_edited_branch:
             last_commit = latest_edited_branch[0]["latestCommit"]
@@ -77,9 +73,7 @@ class BitbucketConnector(VCSConnector):
         return ""
 
     @staticmethod
-    def export_repository(
-        repository_information: Dict, latest_commit: str, vcs_instance_name: str
-    ) -> Repository:
+    def export_repository(repository_information: Dict, latest_commit: str, vcs_instance_name: str) -> Repository:
         """
         A method which generate a repositoryInfo object about a single bitbucket repository.
 
@@ -88,9 +82,7 @@ class BitbucketConnector(VCSConnector):
         :param latest_commit: Bitbucket latest_commit for a single repo as returned by the Bitbucket API.
         :return RepositoryInfo object
         """
-        http_clone_url = BitbucketConnector.get_clone_url(
-            repository_information["links"]["clone"], "http"
-        )
+        http_clone_url = BitbucketConnector.get_clone_url(repository_information["links"]["clone"], "http")
         repository = Repository(
             latest_commit=latest_commit,
             repository_url=http_clone_url,

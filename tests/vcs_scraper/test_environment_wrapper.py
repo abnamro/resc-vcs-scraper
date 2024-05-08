@@ -52,12 +52,6 @@ def test_create_bitbucket_client_from_env():
     bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(vcs_instance)
     session = requests.Session()
     session.headers["Authorization"] = f"Bearer {vcs_instance.token}"
-    assert (
-        bitbucket_client.url
-        == f"{vcs_instance.scheme}://{vcs_instance.hostname}:{vcs_instance.port}"
-    )
+    assert bitbucket_client.url == f"{vcs_instance.scheme}://{vcs_instance.hostname}:{vcs_instance.port}"
     assert bitbucket_client.api_client.url == bitbucket_client.url
-    assert (
-        bitbucket_client.api_client._session.headers["Authorization"]
-        == session.headers["Authorization"]
-    )
+    assert bitbucket_client.api_client._session.headers["Authorization"] == session.headers["Authorization"]

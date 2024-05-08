@@ -13,9 +13,7 @@ from vcs_scraper.vcs_instances_parser import VCSInstance
 
 from vcs_scraper.vcs_connectors.bitbucket_connector import BitbucketConnector  # noqa: E402  # isort:skip
 
-with mock.patch.dict(
-    os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}
-):
+with mock.patch.dict(os.environ, {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"}):
     btbk_vcs_instance = VCSInstance(
         name="test_name2",
         provider_type=BITBUCKET,
@@ -47,9 +45,7 @@ def test_export_repository_all_branches():
 
     vcs_instance_name = "test server"
 
-    result = BitbucketConnector.export_repository(
-        repository_information, latest_commit, vcs_instance_name
-    )
+    result = BitbucketConnector.export_repository(repository_information, latest_commit, vcs_instance_name)
 
     assert type(result) is Repository
     assert result.repository_name == "repo1"
@@ -74,18 +70,12 @@ def test_get_clone_url():
 
 
 def test_create_bitbucket_client_from_vcs_instance():
-    bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(
-        btbk_vcs_instance
-    )
+    bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(btbk_vcs_instance)
     session = requests.Session()
     session.headers["Authorization"] = f"Bearer {btbk_vcs_instance.token}"
     assert (
-        bitbucket_client.url
-        == f"{btbk_vcs_instance.scheme}://{btbk_vcs_instance.hostname}"
+        bitbucket_client.url == f"{btbk_vcs_instance.scheme}://{btbk_vcs_instance.hostname}"
         f":{btbk_vcs_instance.port}"
     )
     assert bitbucket_client.api_client.url == bitbucket_client.url
-    assert (
-        bitbucket_client.api_client._session.headers["Authorization"]
-        == session.headers["Authorization"]
-    )
+    assert bitbucket_client.api_client._session.headers["Authorization"] == session.headers["Authorization"]
