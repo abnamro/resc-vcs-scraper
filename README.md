@@ -3,6 +3,7 @@
 [![Celery][celery-shield]][celery-url]
 [![Pydantic][pydantic-shield]][pydantic-url]
 [![CI][ci-shield]][ci-url]
+[![OpenSSF Scorecard][ossf-shield]][ossf-url]
 [![SonarCloud][sonar-cloud-shield]][sonar-cloud-url]
 
 > [!NOTE]  
@@ -175,3 +176,5 @@ tox -v               # Run this command to run all of the above tests
 [ci-url]: https://github.com/abnamro/repository-scanner/actions/workflows/vcs-scraper-ci.yaml
 [sonar-cloud-shield]: https://sonarcloud.io/api/project_badges/measure?project=abnamro-resc_resc-vcs-scraper&metric=alert_status
 [sonar-cloud-url]: https://sonarcloud.io/summary/new_code?id=abnamro-resc_resc-vcs-scraper
+[ossf-shield]: https://api.securityscorecards.dev/projects/github.com/abnamro/resc-vcs-scraper/badge
+[ossf-url]: https://securityscorecards.dev/viewer/?uri=github.com/abnamro/resc-vcs-scraper
