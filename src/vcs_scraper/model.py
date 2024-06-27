@@ -48,7 +48,6 @@ class VCSInstance(BaseModel):
 
     @field_validator("scheme", mode="before")
     @classmethod
-    @classmethod
     def check_scheme(cls, value):
         allowed_schemes = ["http", "https"]
         if value not in allowed_schemes:
