@@ -4,6 +4,7 @@ from typing import List
 # Third Party
 import requests
 from github import Github
+from github.Auth import Token
 from github.Repository import Repository as GithubRepository
 
 # First Party
@@ -24,7 +25,7 @@ class GithubPublicConnector(VCSConnector):
     @property
     def api_client(self):
         if not self._api_client:
-            self._api_client = Github(login_or_token=self.access_token)
+            self._api_client = Github(auth=Token(self.access_token))
         return self._api_client
 
     def get_all_projects(self) -> List[str]:
