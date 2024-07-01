@@ -1,6 +1,5 @@
 # Standard Library
 import logging
-from typing import List
 
 # Third Party
 import requests
@@ -66,9 +65,9 @@ def extract_project_information(project_key, vcs_client, vcs_instance_name):
     return project_tasks
 
 
-def send_tasks_to_celery_queue(task_name: str, queue_name: str, project_tasks: List[Repository]):
+def send_tasks_to_celery_queue(task_name: str, queue_name: str, project_tasks: list[Repository]):
     for task in project_tasks:
-        celery_client.send_task(task_name, kwargs={"repository": task.json()}, queue=queue_name)
+        celery_client.send_task(task_name, kwargs={"repository": task.model_dump_json()}, queue=queue_name)
 
 
 @celery_client.task(Queue=PROJECT_QUEUE)

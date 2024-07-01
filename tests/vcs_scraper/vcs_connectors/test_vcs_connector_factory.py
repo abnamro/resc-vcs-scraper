@@ -2,7 +2,7 @@
 import os
 
 # Third Party
-from mock import mock
+from unittest import mock
 
 # First Party
 from vcs_scraper.constants import AZURE_DEVOPS, BITBUCKET

@@ -1,5 +1,4 @@
 # Standard Library
-from typing import Dict
 
 # Third Party
 import requests
@@ -73,7 +72,7 @@ class BitbucketConnector(VCSConnector):
         return ""
 
     @staticmethod
-    def export_repository(repository_information: Dict, latest_commit: str, vcs_instance_name: str) -> Repository:
+    def export_repository(repository_information: dict, latest_commit: str, vcs_instance_name: str) -> Repository:
         """
         A method which generate a repositoryInfo object about a single bitbucket repository.
 

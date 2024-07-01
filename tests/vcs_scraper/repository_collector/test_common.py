@@ -79,7 +79,7 @@ def test_send_tasks_to_celery_queue(celery_send_task):
     for index, send_task_call in enumerate(celery_send_task.call_args_list):
         args, kwargs = send_task_call
         assert args[0] == "celery_task1"
-        assert kwargs["kwargs"]["repository"] == project_tasks[index].json()
+        assert kwargs["kwargs"]["repository"] == project_tasks[index].model_dump_json()
         assert kwargs["queue"] == repository_queue
 
 

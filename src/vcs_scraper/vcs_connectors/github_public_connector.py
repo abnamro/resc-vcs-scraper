@@ -1,5 +1,4 @@
 # Standard Library
-from typing import List
 
 # Third Party
 import requests
@@ -28,7 +27,7 @@ class GithubPublicConnector(VCSConnector):
             self._api_client = Github(auth=Token(self.access_token))
         return self._api_client
 
-    def get_all_projects(self) -> List[str]:
+    def get_all_projects(self) -> list[str]:
         try:
             return [user.login for user in self.api_client.get_users()]
         except (
@@ -41,7 +40,7 @@ class GithubPublicConnector(VCSConnector):
         ) as ex:
             raise ConnectionError(ex) from ex
 
-    def get_repos(self, project_key) -> List[dict]:
+    def get_repos(self, project_key) -> list[dict]:
         repository_list = []
         repos = list(self.api_client.get_user(project_key).get_repos())
         for repo in repos:
