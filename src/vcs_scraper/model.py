@@ -1,31 +1,23 @@
 # pylint: disable=no-name-in-module
 # Standard Library
-import dataclasses
-import json
 import os
 from enum import Enum
-from typing import List, Optional
+from typing import Annotated
 
 # Third Party
-from pydantic import field_validator, Field, StringConstraints, BaseModel
+from pydantic import BaseModel, Field, StringConstraints, field_validator
 
 # First Party
 from vcs_scraper.constants import AZURE_DEVOPS, BITBUCKET, GITHUB_PUBLIC
-from typing_extensions import Annotated
 
 
-@dataclasses.dataclass
-class Repository:
+class Repository(BaseModel):
     repository_name: str
     repository_id: str
     repository_url: str
     project_key: str
     vcs_instance_name: str
     latest_commit: str
-
-    def json(self):
-        json_repo = json.dumps(dataclasses.asdict(self))
-        return json_repo
 
 
 class VCSProviders(str, Enum):
@@ -42,9 +34,9 @@ class VCSInstance(BaseModel):
     scheme: str
     username: Annotated[str, StringConstraints(max_length=200)]
     token: Annotated[str, StringConstraints(max_length=200)]
-    exceptions: Optional[List[str]] = []
-    scope: Optional[List[str]] = []
-    organization: Optional[str] = None
+    exceptions: list[str] | None = []
+    scope: list[str] | None = []
+    organization: str | None = None
 
     @field_validator("scheme", mode="before")
     @classmethod

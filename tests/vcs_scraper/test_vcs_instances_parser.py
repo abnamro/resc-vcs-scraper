@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 # Third Party
-from mock import mock
+from unittest import mock
 
 # First Party
 from vcs_scraper.vcs_instances_parser import parse_vcs_instances_file

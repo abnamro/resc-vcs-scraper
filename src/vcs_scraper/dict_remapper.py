@@ -1,9 +1,8 @@
 # Standard Library
 from functools import reduce
-from typing import List
 
 
-def remap_dict_keys(input_dict: dict, transformation_map: List):
+def remap_dict_keys(input_dict: dict, transformation_map: list):
     new_keys = [val[1] for val in transformation_map]
     for old_key, new_key in transformation_map:
         create_nested_dictionary(input_dict, new_key, get_value_from_nested_dictionary(input_dict, *old_key))
@@ -35,3 +34,12 @@ def delete_keys_from_nested_dict(dict_del, lst_keys):
         for value in dict_del.values():
             if isinstance(value, dict):
                 delete_keys_from_nested_dict(value, lst_keys[1:])
+
+
+def convert_all_values_to_string(input_dict: dict):
+    for key, value in input_dict.items():
+        if isinstance(value, dict):
+            input_dict[key] = convert_all_values_to_string(value)
+        else:
+            input_dict[key] = str(value)
+    return input_dict

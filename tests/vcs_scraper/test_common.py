@@ -1,10 +1,10 @@
 # Standard Library
 import os
 from pathlib import Path
-from typing import Dict
 
 # Third Party
-from mock import mock
+from unittest import mock
+
 from mock.mock import patch
 
 # First Party
@@ -20,7 +20,7 @@ def test_load_vcs_instances_into_map():
         os.environ,
         {"VCS_INSTANCE_TOKEN": "token123", "VCS_INSTANCE_USERNAME": "user123"},
     ):
-        vcs_instances_map: Dict[str, VCSInstance] = load_vcs_instances_into_map(str(my_data_path))
+        vcs_instances_map: dict[str, VCSInstance] = load_vcs_instances_into_map(str(my_data_path))
     element1 = list(vcs_instances_map.keys())[0]
     element2 = list(vcs_instances_map.keys())[1]
 

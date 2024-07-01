@@ -3,7 +3,6 @@ import logging.config
 import sys
 import sysconfig
 from os import path
-from typing import Dict, List
 
 # Third Party
 from celery import Celery
@@ -47,8 +46,8 @@ def initialise_logs(log_file_path: str, debug: str):
     return logger_config
 
 
-def load_vcs_instances_into_map(file_path: str) -> Dict[str, VCSInstance]:
-    vcs_instances: List[VCSInstance] = parse_vcs_instances_file(file_path)
+def load_vcs_instances_into_map(file_path: str) -> dict[str, VCSInstance]:
+    vcs_instances: list[VCSInstance] = parse_vcs_instances_file(file_path)
     if not vcs_instances:
         logger.info("Exiting due to issues in VCS Instances definition in file " f"{file_path}")
         sys.exit(-1)

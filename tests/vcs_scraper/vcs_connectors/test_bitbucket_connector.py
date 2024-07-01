@@ -31,7 +31,7 @@ def test_export_repository_all_branches():
     repository_information = {
         "project": {"key": "9999"},
         "name": "repo1",
-        "id": "1234",
+        "id": 1234,
         "links": {
             "clone": [
                 {"href": "ssh://git@test.com/repo.git", "name": "ssh"},
@@ -48,6 +48,7 @@ def test_export_repository_all_branches():
     result = BitbucketConnector.export_repository(repository_information, latest_commit, vcs_instance_name)
 
     assert type(result) is Repository
+    assert type(result.repository_id) is str
     assert result.repository_name == "repo1"
     assert result.project_key == "9999"
     assert result.vcs_instance_name == "test server"

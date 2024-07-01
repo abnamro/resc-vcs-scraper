@@ -2,7 +2,6 @@
 import json
 import logging
 from json import JSONDecodeError
-from typing import List
 
 # Third Party
 from pydantic import ValidationError
@@ -13,8 +12,8 @@ from vcs_scraper.model import VCSInstance
 logger = logging.getLogger(__name__)
 
 
-def parse_vcs_instances_file(filepath: str) -> List[VCSInstance]:
-    vcs_instances: List[VCSInstance] = []
+def parse_vcs_instances_file(filepath: str) -> list[VCSInstance]:
+    vcs_instances: list[VCSInstance] = []
     errors_found = False
     logger.info(f"Reading VCS instances from file {filepath}")
     try:

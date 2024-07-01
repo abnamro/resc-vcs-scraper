@@ -1,5 +1,6 @@
 # First Party
 from vcs_scraper.dict_remapper import (
+    convert_all_values_to_string,
     create_nested_dictionary,
     delete_keys_from_nested_dict,
     get_value_from_nested_dictionary,
@@ -60,3 +61,10 @@ def test_delete_keys_from_nested_dict():
     expected_dict = {"a": {"b": {}}}
     delete_keys_from_nested_dict(nested_dict, keys)
     assert nested_dict == expected_dict
+
+
+def test_convert_all_values_to_string():
+    nested_dict = {"a": {"b": {"c": 123}, "d": 456}, "e": 789}
+    expected_nested_dict = {"a": {"b": {"c": "123"}, "d": "456"}, "e": "789"}
+
+    assert convert_all_values_to_string(nested_dict) == expected_nested_dict
