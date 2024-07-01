@@ -1,4 +1,3 @@
-
 # First Party
 from vcs_scraper.environment_wrapper import EnvironmentVariable
 
