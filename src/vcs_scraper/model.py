@@ -17,7 +17,7 @@ class Repository(BaseModel):
     repository_url: str
     project_key: str
     vcs_instance_name: str
-    latest_commit: str
+    latest_commit: str | None = None
 
 
 class VCSProviders(str, Enum):
