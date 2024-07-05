@@ -1,4 +1,5 @@
 # Standard Library
+import json
 import logging
 
 # Third Party
@@ -11,6 +12,8 @@ from vcs_scraper.configuration import (
     RABBITMQ_QUEUES_PASSWORD,
     RABBITMQ_QUEUES_USERNAME,
     REQUIRED_ENV_VARS,
+    RESC_API_NO_AUTH_SERVICE_HOST,
+    RESC_API_NO_AUTH_SERVICE_PORT,
     RESC_RABBITMQ_SERVICE_HOST,
     VCS_INSTANCES_FILE_PATH,
 )
@@ -20,7 +23,7 @@ from vcs_scraper.constants import (
     SECRET_SCANNER_TASK_NAME,
 )
 from vcs_scraper.environment_wrapper import validate_environment
-from vcs_scraper.model import Repository
+from vcs_scraper.model import ActiveRepositories, Repository, SimpleRepository
 from vcs_scraper.vcs_connectors.vcs_connector_factory import VCSConnectorFactory
 
 logger = logging.getLogger(__name__)
@@ -62,12 +65,40 @@ def extract_project_information(project_key, vcs_client, vcs_instance_name):
                 f"Error while processing repository '{project_key}/{repository['name']}':"
                 f" Unable to obtain the repository's latest commit: {http_exception}"
             )
+    send_repository_id_to_backend(
+        repositories=extract_repository_id_and_name(project_repositories),
+        vcs_instance_name=vcs_instance_name,
+        project_key=project_key,
+    )
     return project_tasks
 
 
 def send_tasks_to_celery_queue(task_name: str, queue_name: str, project_tasks: list[Repository]):
     for task in project_tasks:
         celery_client.send_task(task_name, kwargs={"repository": task.model_dump_json()}, queue=queue_name)
+
+
+def extract_repository_id_and_name(repositories: list):
+    return [SimpleRepository(id=str(repo["id"]), name=repo["name"]) for repo in repositories]
+
+
+def send_repository_id_to_backend(repositories: list, vcs_instance_name: str, project_key: str):
+    backend_url = (
+        f"http://{env_variables[RESC_API_NO_AUTH_SERVICE_HOST]}:{env_variables[RESC_API_NO_AUTH_SERVICE_PORT]}"
+    )
+    url = f"{backend_url}/resc/v1/repositories/active"
+    headers = {"Content-Type": "application/json"}
+    body = ActiveRepositories(
+        project_key=project_key, repositories=repositories, vcs_instance_name=vcs_instance_name
+    ).model_dump_json()
+
+    try:
+        response = requests.post(url, json=json.loads(body), headers=headers)
+        response.raise_for_status()
+        logger.info(f"repository in project{project_key} exists")
+    except requests.exceptions.RequestException as e:
+        logger.info(f"Error updating repository in project {project_key}: {e}")
+        return None
 
 
 @celery_client.task(Queue=PROJECT_QUEUE)

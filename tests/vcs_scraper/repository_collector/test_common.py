@@ -8,7 +8,7 @@ from celery import Celery
 
 # First Party
 from vcs_scraper.constants import AZURE_DEVOPS, BITBUCKET, REPOSITORY_QUEUE
-from vcs_scraper.model import Repository
+from vcs_scraper.model import Repository, SimpleRepository
 from vcs_scraper.vcs_connectors.vcs_connector_factory import VCSConnectorFactory
 from vcs_scraper.vcs_instances_parser import VCSInstance
 
@@ -66,7 +66,7 @@ def test_send_tasks_to_celery_queue(celery_send_task):
         project_key="PROJ",
         repository_name="name",
         latest_commit="abc123",
-        repository_url="www.fake-vcs.com/proj/name",
+        repository_url="https://www.fake-vcs.com/proj/name",
         repository_id="xyz",
         vcs_instance_name="test server",
     )
@@ -94,7 +94,8 @@ def test_send_tasks_to_celery_queue_without_tasks(celery_send_task):
 
 
 @patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_repos")
-def test_extract_ado_project_information_with_empty_project(mock_get):
+@patch("vcs_scraper.repository_collector.common.send_repository_id_to_backend")
+def test_extract_ado_project_information_with_empty_project(mock_send_repository_id_to_backend, mock_get):
     azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(ado_vcs_instance)
     project_key = "mock_project_key"
 
@@ -103,12 +104,14 @@ def test_extract_ado_project_information_with_empty_project(mock_get):
 
     project_tasks = common.extract_project_information(project_key, azure_devops_client, ado_vcs_instance.name)
 
+    mock_send_repository_id_to_backend.assert_called_once()
     assert project_tasks == []
 
 
 @patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_repos")
 @patch("vcs_scraper.vcs_connectors.azure_devops_connector.AzureDevopsConnector.get_latest_commit")
-def test_extract_ado_project_information(mock_get_latest_commit, mock_get_repos):
+@patch("vcs_scraper.repository_collector.common.send_repository_id_to_backend")
+def test_extract_ado_project_information(mock_send_repository_id_to_backend, mock_get_latest_commit, mock_get_repos):
     azure_devops_client = VCSConnectorFactory.create_client_from_vcs_instance(ado_vcs_instance)
     project_key = "GRID0001"
 
@@ -127,6 +130,10 @@ def test_extract_ado_project_information(mock_get_latest_commit, mock_get_repos)
 
     project_tasks = common.extract_project_information(project_key, azure_devops_client, ado_vcs_instance.name)
 
+    mock_send_repository_id_to_backend.assert_called_once()
+    mock_send_repository_id_to_backend.assert_called_with(
+        repositories=[SimpleRepository(id="1234", name="repo1")], vcs_instance_name="test_name1", project_key="GRID0001"
+    )
     assert len(project_tasks) == 1
     result = project_tasks[0]
     assert type(result) is Repository
@@ -136,7 +143,8 @@ def test_extract_ado_project_information(mock_get_latest_commit, mock_get_repos)
 
 
 @patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_repos")
-def test_extract_btbk_project_information_with_empty_project(mock_get):
+@patch("vcs_scraper.repository_collector.common.send_repository_id_to_backend")
+def test_extract_btbk_project_information_with_empty_project(mock_send_repository_id_to_backend, mock_get):
     bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(btbk_vcs_instance)
     project_key = "mock_project_key"
 
@@ -145,19 +153,21 @@ def test_extract_btbk_project_information_with_empty_project(mock_get):
 
     project_tasks = common.extract_project_information(project_key, bitbucket_client, btbk_vcs_instance.name)
 
+    mock_send_repository_id_to_backend.assert_called_once()
     assert project_tasks == []
 
 
 @patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_repos")
 @patch("vcs_scraper.vcs_connectors.bitbucket_connector.BitbucketConnector.get_latest_commit")
-def test_extract_btbk_project_information(mock_get_latest_commit, mock_get_repos):
+@patch("vcs_scraper.repository_collector.common.send_repository_id_to_backend")
+def test_extract_btbk_project_information(mock_send_repository_id_to_backend, mock_get_latest_commit, mock_get_repos):
     bitbucket_client = VCSConnectorFactory.create_client_from_vcs_instance(btbk_vcs_instance)
     project_key = "PROJ"
 
     repository_information = {
         "project": {"id": 1337, "key": project_key},
         "name": "repo1",
-        "id": "1234",
+        "id": 1234,  # We force int here to simulate the response of bitbucket
         "links": {
             "clone": [
                 {"href": "ssh://git@test.com/repo.git", "name": "ssh"},
@@ -174,6 +184,11 @@ def test_extract_btbk_project_information(mock_get_latest_commit, mock_get_repos
     mock_get_latest_commit.return_value = get_latest_commit
 
     project_tasks = common.extract_project_information(project_key, bitbucket_client, btbk_vcs_instance.name)
+
+    mock_send_repository_id_to_backend.assert_called_once()
+    mock_send_repository_id_to_backend.assert_called_with(
+        repositories=[SimpleRepository(id="1234", name="repo1")], vcs_instance_name="test_name2", project_key="PROJ"
+    )
 
     assert len(project_tasks) == 1
     result = project_tasks[0]
