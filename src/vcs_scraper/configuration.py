@@ -7,7 +7,8 @@ RABBITMQ_QUEUES_USERNAME = "RABBITMQ_QUEUES_USERNAME"
 RABBITMQ_QUEUES_PASSWORD = "RABBITMQ_QUEUES_PASSWORD"
 PROJECT_QUEUE = "PROJECT_QUEUE"
 VCS_INSTANCES_FILE_PATH = "VCS_INSTANCES_FILE_PATH"
-
+RESC_API_NO_AUTH_SERVICE_HOST = "RESC_API_NO_AUTH_SERVICE_HOST"
+RESC_API_NO_AUTH_SERVICE_PORT = "RESC_API_NO_AUTH_SERVICE_PORT"
 DEBUG_MODE = "DEBUG_MODE"
 
 REQUIRED_ENV_VARS = [
@@ -41,5 +42,15 @@ REQUIRED_ENV_VARS = [
         VCS_INSTANCES_FILE_PATH,
         "The absolute path to the json file containing the vcs_instances_definitions",
         required=True,
+    ),
+    EnvironmentVariable(
+        RESC_API_NO_AUTH_SERVICE_HOST,
+        "The hostname/IP address of the no auth service.",
+        required=False,
+    ),
+    EnvironmentVariable(
+        RESC_API_NO_AUTH_SERVICE_PORT,
+        "The port of the no auth service.",
+        required=False,
     ),
 ]

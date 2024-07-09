@@ -5,18 +5,29 @@ from enum import Enum
 from typing import Annotated
 
 # Third Party
-from pydantic import BaseModel, Field, StringConstraints, field_validator
+from pydantic import BaseModel, Field, HttpUrl, StringConstraints, field_validator
 
 # First Party
 from vcs_scraper.constants import AZURE_DEVOPS, BITBUCKET, GITHUB_PUBLIC
 
 
+class SimpleRepository(BaseModel):
+    id: Annotated[str, StringConstraints(min_length=1, max_length=100)]
+    name: Annotated[str, StringConstraints(min_length=1, max_length=100)]
+
+
+class ActiveRepositories(BaseModel):
+    project_key: Annotated[str, StringConstraints(min_length=1, max_length=100)]
+    repositories: Annotated[list[SimpleRepository], Field(min_length=1)]
+    vcs_instance_name: Annotated[str, StringConstraints(max_length=200)]
+
+
 class Repository(BaseModel):
-    repository_name: str
-    repository_id: str
-    repository_url: str
-    project_key: str
-    vcs_instance_name: str
+    repository_name: Annotated[str, StringConstraints(min_length=1, max_length=100)]
+    repository_id: Annotated[str, StringConstraints(min_length=1, max_length=100)]
+    repository_url: HttpUrl
+    project_key: Annotated[str, StringConstraints(min_length=1, max_length=100)]
+    vcs_instance_name: Annotated[str, StringConstraints(min_length=1, max_length=100)]
     latest_commit: str | None = None
 
 

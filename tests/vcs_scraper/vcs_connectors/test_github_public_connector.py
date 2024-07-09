@@ -63,7 +63,7 @@ def test_export_repository_all_branches():
     assert result.project_key == "project1"
     assert result.repository_id == "1"
     assert result.repository_name == "repo1"
-    assert result.repository_url == "http://test.com/repo"
+    assert str(result.repository_url) == "http://test.com/repo"
     assert result.vcs_instance_name == "test server"
     assert result.latest_commit == "abc123"
 
