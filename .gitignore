@@ -148,3 +148,8 @@ cython_debug/
 
 # Mac
 .DS_Store
+
+# Corporate configurations
+rootfs/*
+!rootfs/.gitkeep
+!rootfs/README.md

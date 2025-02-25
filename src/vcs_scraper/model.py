@@ -70,7 +70,7 @@ class VCSInstance(BaseModel):
     def check_scope_and_exceptions(cls, value, values):
         if value and values.data["exceptions"]:
             raise ValueError(
-                "You cannot specify bot the scope and exceptions to the scan, only one setting" " is supported."
+                "You cannot specify bot the scope and exceptions to the scan, only one setting is supported."
             )
         return value
 

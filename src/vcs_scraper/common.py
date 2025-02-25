@@ -49,6 +49,6 @@ def initialise_logs(log_file_path: str, debug: str):
 def load_vcs_instances_into_map(file_path: str) -> dict[str, VCSInstance]:
     vcs_instances: list[VCSInstance] = parse_vcs_instances_file(file_path)
     if not vcs_instances:
-        logger.info("Exiting due to issues in VCS Instances definition in file " f"{file_path}")
+        logger.info(f"Exiting due to issues in VCS Instances definition in file {file_path}")
         sys.exit(-1)
     return {vcs_instance.name: vcs_instance for vcs_instance in vcs_instances}
