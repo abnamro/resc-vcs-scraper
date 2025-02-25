@@ -149,7 +149,7 @@ cython_debug/
 # Mac
 .DS_Store
 
-# AAB configurations
+# Corporate configurations
 rootfs/*
 !rootfs/.gitkeep
 !rootfs/README.md
