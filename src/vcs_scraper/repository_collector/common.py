@@ -54,7 +54,7 @@ def extract_project_information(project_key, vcs_client, vcs_instance_name):
             if latest_commit:
                 project_tasks.append(task_parameters)
                 logger.info(
-                    f"Information for repository: '{project_key}/{repository['name']}' " f"was fetched successfully"
+                    f"Information for repository: '{project_key}/{repository['name']}' was fetched successfully"
                 )
             else:
                 # Repository has no commits, will not forward to scanner

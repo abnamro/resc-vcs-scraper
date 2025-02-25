@@ -107,7 +107,7 @@ class AzureDevopsConnector(VCSConnector):
                 latest_commit = latest_commits[0].commit_id
         except AzureDevOpsServiceError as azure_exception:
             logger.error(
-                f"Failed to get latest commit for repository: {project_key}/{repository_id} --> " f"{azure_exception}"
+                f"Failed to get latest commit for repository: {project_key}/{repository_id} --> {azure_exception}"
             )
         return latest_commit
 

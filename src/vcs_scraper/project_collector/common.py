@@ -90,7 +90,7 @@ def collect_projects_from_vcs_instance(vcs_instance: VCSInstance) -> None:
             logger.info(f"Project '{project_name}' was sent successfully.")
         except RetryError as exc:
             raise SystemExit(
-                f"Error while sending project '{project_name}' to the 'projects' : " f"retry timed out"
+                f"Error while sending project '{project_name}' to the 'projects' : retry timed out"
             ) from exc
 
     logger.info(
