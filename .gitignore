@@ -152,3 +152,4 @@ cython_debug/
 # AAB configurations
 rootfs/*
 !rootfs/.gitkeep
+!rootfs/README.md

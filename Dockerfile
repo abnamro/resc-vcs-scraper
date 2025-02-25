@@ -12,7 +12,7 @@ ARG RUN_AS_GROUP="apiuser"
 ARG UID=10001
 ARG GID=10002
 
-# Initialize AAB inner layer
+# Initialize Corporate configurations
 # TODO add any files under rootfs that are needed for proxy settings
 COPY rootfs/ /
 
