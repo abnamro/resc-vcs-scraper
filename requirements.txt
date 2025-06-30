@@ -1,6 +1,6 @@
 celery==5.4.0
 atlassian-python-api==3.41.19
-requests==2.32.3
+requests==2.32.4
 azure-devops==7.1.0b4
 tenacity==9.0.0
 pydantic==2.10.6
