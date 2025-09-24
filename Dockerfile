@@ -2,7 +2,7 @@
 ARG SOURCE_REGISTRY
 
 # build stage
-FROM ${SOURCE_REGISTRY}python:3.12-alpine3.19
+FROM ${SOURCE_REGISTRY}python:3.12-alpine3.22
 
 ARG NAME="resc-vcs-scraper"
 ARG DESCRIPTION="Version Control Systems Scraper"
